@@ -114,6 +114,7 @@ module.exports = class TranslationHandler {
    */
   get(language, path, data = {}) {
     if (!language) language = "en_EN";
+    if(!this.availableLanguages.includes(language)) language = 'en-US';
 
     const l = this.getLanguage(language);
     const p = path.split(".");

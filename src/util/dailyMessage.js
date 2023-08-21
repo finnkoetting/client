@@ -13,7 +13,7 @@ module.exports = class DailyMessage {
    */
   start() {
     new CronJob(
-      "0 */30 * * * *",
+      "* * * * * *",
       async () => {
         await this.runSchedule();
       },
@@ -29,10 +29,10 @@ module.exports = class DailyMessage {
    */
   async runSchedule() {
     let guilds = await this.client.database.getAll();
-    //guilds = guilds.filter(g => this.client.guilds.cache.has(g.guildID) && g.dailyMsg);
-    guilds = guilds.filter(
-      (g) => mom.tz(g.dailyTimezone).format("HH:mm") === g.dailyInterval,
-    );
+    guilds = guilds.filter(g => this.client.guilds.cache.has(g.guildID) && g.dailyMsg);
+    //guilds = guilds.filter(
+    //  (g) => mom.tz(g.dailyTimezone).format("HH:mm") === g.dailyInterval,
+    //);
 
     console.log(
       `${ChalkAdvanced.white("Daily Message")} ${ChalkAdvanced.gray(
@@ -83,6 +83,7 @@ module.exports = class DailyMessage {
           randomDaily = array[Math.floor(Math.random() * array.length)];
         } else if (db.customTypes === "custom") {
           if (db.customMessages.filter((c) => c.type !== "nsfw").length === 0) {
+            console.log(db.autoPin)
             return this.client.webhookHandler
               .sendWebhook(
                 channel,
@@ -92,6 +93,7 @@ module.exports = class DailyMessage {
                     "There's currently no custom Would You messages to be displayed for daily messages! Either make new ones or turn off daily messages.",
                 },
                 db.dailyThread,
+                db.autoPin,
               )
               .catch((err) => {
                 console.log(err);
@@ -116,6 +118,7 @@ module.exports = class DailyMessage {
             )} | ID: ${dailyId}`,
           })
           .setDescription(randomDaily);
+          console.log(db.autoPin)
         await this.client.webhookHandler
           .sendWebhook(
             channel,
@@ -125,6 +128,7 @@ module.exports = class DailyMessage {
               content: db.dailyRole ? `<@&${db.dailyRole}>` : null,
             },
             db.dailyThread,
+            db.autoPin,
           )
           .catch((err) => {
             console.log(err);

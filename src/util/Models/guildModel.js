@@ -52,6 +52,10 @@ const guildProfile = new Schema(
       type: Boolean,
       default: false,
     },
+    autoPin: {
+      type: Boolean,
+      default: true,
+    },
     replay: {
       type: Boolean,
       default: true,

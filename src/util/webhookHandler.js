@@ -193,7 +193,7 @@ module.exports = class WebhookHandler {
    * @param {object} message the message to send
    * @return {Promise<object>}
    */
-  sendWebhook = async (channel = null, channelId, message, thread) => {
+  sendWebhook = async (channel = null, channelId, message, thread, pin) => {
     if (!channelId && channel?.id) channelId = channel.id;
 
     if (!channelId) return;
@@ -228,20 +228,24 @@ module.exports = class WebhookHandler {
       const fallbackThread = await webhookClient.send(message).catch((err) => {
         return this.webhookFallBack(channel, channelId, message, false);
       });
-      if (!thread) return;
-      this.c.rest.post(
-        "/channels/" +
-          channelId +
-          "/messages/" +
-          fallbackThread.id +
-          "/threads",
-        {
-          headers: {
-            name: "Mixed - Daily Message",
-            auto_archive_duration: "1440",
-          },
-        },
-      );
+      if (!thread && !pin) return;
+      if (thread) {
+        this.c.rest.post(
+          "/channels/" + channelId + "/messages/" + fallbackThread.id + "/threads",
+          {
+            body: {
+              name: "Mixed - Daily Message",
+              auto_archive_duration: "1440",
+            },
+          }
+        );
+      }
+      
+      if (pin) {
+        this.c.rest.put("/channels/" + channelId + "/pins/" + fallbackThread.id).catch((err) => {
+          console.error("Error pinning message:", err);
+        });
+      }
     } else {
       const webhook = new WebhookClient({
         id: webhookData?.id,
@@ -252,16 +256,26 @@ module.exports = class WebhookHandler {
       const webhookThread = await webhook.send(message).catch((err) => {
         return this.webhookFallBack(channel, channelId, message, err);
       });
-      if (!thread) return;
-      this.c.rest.post(
-        "/channels/" + channelId + "/messages/" + webhookThread.id + "/threads",
-        {
-          body: {
-            name: "Mixed - Daily Message",
-            auto_archive_duration: "1440",
-          },
-        },
-      );
+      const pinned = await channel.messages.fetchPinned().catch((err) => {console.log(err)});
+      console.log(pinned.filter(message => message.author.id !== "1105490639849803858"));
+      if (!thread && !pin) return;
+      if (thread) {
+        this.c.rest.post(
+          "/channels/" + channelId + "/messages/" + webhookThread.id + "/threads",
+          {
+            body: {
+              name: "Mixed - Daily Message",
+              auto_archive_duration: "1440",
+            },
+          }
+        );
+      }
+      
+      if (pin) {
+        this.c.rest.put("/channels/" + channelId + "/pins/" + webhookThread.id).catch((err) => {
+          console.error("Error pinning message:", err);
+        });
+      }
     }
   };
 };
