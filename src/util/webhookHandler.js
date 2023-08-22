@@ -193,12 +193,13 @@ module.exports = class WebhookHandler {
    * @param {object} message the message to send
    * @return {Promise<object>}
    */
-  sendWebhook = async (channel = null, channelId, message, thread, pin) => {
+  sendWebhook = async (channel = null, channelId, message, thread, pin, lastPinnedMessage) => {
     if (!channelId && channel?.id) channelId = channel.id;
 
     if (!channelId) return;
 
     const webhookData = await this.getWebhook(channelId);
+    console.log(webhookData)
 
     if (webhookData?.webhookId) webhookData.id = webhookData.webhookId;
     if (webhookData?.webhookToken) webhookData.token = webhookData.webhookToken;
@@ -242,7 +243,7 @@ module.exports = class WebhookHandler {
       }
       
       if (pin) {
-        this.c.rest.put("/channels/" + channelId + "/pins/" + fallbackThread.id).catch((err) => {
+        this.c.rest.put("/channels/" + channelId + "/pins/" + fallbackThread.id).then((pin) => {console.log(pin)}).catch((err) => {
           console.error("Error pinning message:", err);
         });
       }
