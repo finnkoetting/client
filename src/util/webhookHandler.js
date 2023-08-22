@@ -35,6 +35,7 @@ module.exports = class WebhookHandler {
       return {
         id: data.webhookId,
         token: data.webhookToken,
+        lastPinnedMessage: data.lastPinnedMessage,
       };
     } else return null;
   };
@@ -193,13 +194,13 @@ module.exports = class WebhookHandler {
    * @param {object} message the message to send
    * @return {Promise<object>}
    */
-  sendWebhook = async (channel = null, channelId, message, thread, pin, lastPinnedMessage) => {
+  sendWebhook = async (channel = null, channelId, message, thread, pin) => {
     if (!channelId && channel?.id) channelId = channel.id;
 
     if (!channelId) return;
 
     const webhookData = await this.getWebhook(channelId);
-    console.log(webhookData)
+    console.log(webhookData.lastPinnedMessage)
 
     if (webhookData?.webhookId) webhookData.id = webhookData.webhookId;
     if (webhookData?.webhookToken) webhookData.token = webhookData.webhookToken;
@@ -251,14 +252,15 @@ module.exports = class WebhookHandler {
       const webhook = new WebhookClient({
         id: webhookData?.id,
         token: webhookData?.token,
+        iconURL: this.c.user.displayAvatarURL(),
+        name: "Would You",
       });
       if (!webhook) return this.webhookFallBack(channel, channelId, message);
-
+      console.log("Message", message)
       const webhookThread = await webhook.send(message).catch((err) => {
         return this.webhookFallBack(channel, channelId, message, err);
       });
-      const pinned = await channel.messages.fetchPinned().catch((err) => {console.log(err)});
-      console.log(pinned.filter(message => message.author.id !== "1105490639849803858"));
+      console.log(webhookThread.id)
       if (!thread && !pin) return;
       if (thread) {
         this.c.rest.post(

@@ -126,6 +126,8 @@ module.exports = class DailyMessage {
             {
               embeds: [embed],
               content: db.dailyRole ? `<@&${db.dailyRole}>` : null,
+              username: "Would You",
+              avatarURL: this.client.user.displayAvatarURL(),
             },
             db.dailyThread,
             db.autoPin,

@@ -13,6 +13,10 @@ const WebhookCache = Schema({
     type: String,
     default: null,
   },
+  lastPinnedMessage: {
+    type: String,
+    default: null,
+  },
 });
 
 module.exports = model("webhookCache", WebhookCache);

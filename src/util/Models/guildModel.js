@@ -56,10 +56,6 @@ const guildProfile = new Schema(
       type: Boolean,
       default: true,
     },
-    lastPinnedMessage: {
-      type: String,
-      default: null,
-    },
     replay: {
       type: Boolean,
       default: true,
