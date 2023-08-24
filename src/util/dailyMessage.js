@@ -13,7 +13,7 @@ module.exports = class DailyMessage {
    */
   start() {
     new CronJob(
-      "* * * * * *",
+      "0 */30 * * * *",
       async () => {
         await this.runSchedule();
       },
@@ -29,10 +29,10 @@ module.exports = class DailyMessage {
    */
   async runSchedule() {
     let guilds = await this.client.database.getAll();
-    guilds = guilds.filter(g => this.client.guilds.cache.has(g.guildID) && g.dailyMsg);
-    //guilds = guilds.filter(
-    //  (g) => mom.tz(g.dailyTimezone).format("HH:mm") === g.dailyInterval,
-    //);
+    //guilds = guilds.filter(g => this.client.guilds.cache.has(g.guildID) && g.dailyMsg);
+    guilds = guilds.filter(
+      (g) => mom.tz(g.dailyTimezone).format("HH:mm") === g.dailyInterval,
+    );
 
     console.log(
       `${ChalkAdvanced.white("Daily Message")} ${ChalkAdvanced.gray(
@@ -83,7 +83,6 @@ module.exports = class DailyMessage {
           randomDaily = array[Math.floor(Math.random() * array.length)];
         } else if (db.customTypes === "custom") {
           if (db.customMessages.filter((c) => c.type !== "nsfw").length === 0) {
-            console.log(db.autoPin)
             return this.client.webhookHandler
               .sendWebhook(
                 channel,
@@ -118,7 +117,7 @@ module.exports = class DailyMessage {
             )} | ID: ${dailyId}`,
           })
           .setDescription(randomDaily);
-          console.log(db.autoPin)
+
         await this.client.webhookHandler
           .sendWebhook(
             channel,

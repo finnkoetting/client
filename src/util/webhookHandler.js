@@ -200,7 +200,6 @@ module.exports = class WebhookHandler {
     if (!channelId) return;
 
     const webhookData = await this.getWebhook(channelId);
-    console.log(webhookData.lastPinnedMessage)
 
     if (webhookData?.webhookId) webhookData.id = webhookData.webhookId;
     if (webhookData?.webhookToken) webhookData.token = webhookData.webhookToken;
@@ -244,9 +243,25 @@ module.exports = class WebhookHandler {
       }
       
       if (pin) {
-        this.c.rest.put("/channels/" + channelId + "/pins/" + fallbackThread.id).then((pin) => {console.log(pin)}).catch((err) => {
+        await this.c.rest.put("/channels/" + channelId + "/pins/" + fallbackThread.id).then((pins) => {console.log("UwU" + pins)}).catch((err) => {
           console.error("Error pinning message:", err);
         });
+        const oldPin = await this.webhookModel.findOne({
+          channelId: channelId,
+        });
+        if(!oldPin.lastPinnedMessage) {
+          await oldPin.updateOne({
+            lastPinnedMessage: webhookThread.id,
+          })
+        }
+           else {
+            await this.c.rest.delete("/channels/" + channelId + "/pins/" + oldPin.lastPinnedMessage).catch((err) => {
+              console.error("Error pinning message:", err);
+            });
+          await oldPin.updateOne({
+            lastPinnedMessage: webhookThread.id,
+          })
+           }
       }
     } else {
       const webhook = new WebhookClient({
@@ -256,11 +271,9 @@ module.exports = class WebhookHandler {
         name: "Would You",
       });
       if (!webhook) return this.webhookFallBack(channel, channelId, message);
-      console.log("Message", message)
       const webhookThread = await webhook.send(message).catch((err) => {
         return this.webhookFallBack(channel, channelId, message, err);
       });
-      console.log(webhookThread.id)
       if (!thread && !pin) return;
       if (thread) {
         this.c.rest.post(
@@ -275,9 +288,27 @@ module.exports = class WebhookHandler {
       }
       
       if (pin) {
-        this.c.rest.put("/channels/" + channelId + "/pins/" + webhookThread.id).catch((err) => {
+        await this.c.rest.put("/channels/" + channelId + "/pins/" + webhookThread.id).catch((err) => {
           console.error("Error pinning message:", err);
         });
+        const oldPin = await this.webhookModel.findOne({
+          channelId: channelId,
+        });
+        if(!oldPin.lastPinnedMessage) {
+          await oldPin.updateOne({
+            lastPinnedMessage: webhookThread.id,
+          })
+        }
+           else {
+            await this.c.rest.delete("/channels/" + channelId + "/pins/" + oldPin.lastPinnedMessage).catch((err) => {
+              console.error("Error pinning message:", err);
+            });
+          await oldPin.updateOne({
+            lastPinnedMessage: webhookThread.id,
+          })
+           }
+
+        console.log(webhookThread.id)
       }
     }
   };
