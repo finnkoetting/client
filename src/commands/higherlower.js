@@ -1,6 +1,10 @@
-const { EmbedBuilder, SlashCommandBuilder } = require("discord.js");
+const { EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder } = require("discord.js");
 const fs = require("fs");
 const path = require("path");
+const { v4: uuidv4 } = require("uuid");
+
+const HL = require("../util/Models/higherlowerModel");
+const HOR = require("../util/classes/generateHOR");
 
 module.exports = {
   requireGuild: true,
@@ -34,7 +38,7 @@ module.exports = {
       const gameDataRaw = fs.readFileSync(
         path.join(__dirname, "..", "data", "hl-en_EN.json")
       );
-      const gamedata = JSON.parse(gamaDateRaw).data;
+      const gameData = JSON.parse(gameDataRaw).data;
 
       const random = Math.floor(Math.random() * gameData.length);
       let comperator = Math.floor(Math.random() * gameData.length);
@@ -45,18 +49,69 @@ module.exports = {
       };
       if (comperator == random) regenerateComperator();
 
-      const game = {
+      const game = new HL({
         creator: interaction.user.id,
         created: new Date(),
-        id: dbGuild.games.length + 1,
+        id: uuidv4(),
+        guild: interaction.guild.id,
         items: {
           current: gameData[random],
           history: [gameData[comperator]],
         },
         score: 0,
-      };
+      });
 
-      guildDb.hl.push(game);
+      game.save();
+
+      const gameImage = new HOR();
+      gameImage.setGame(game);
+      gameImage.setImages([
+        `https://finn.koetting.tk/coding/higherlower/${
+          game.items.history[game.items.history.length - 1].id
+        }.png`,
+        `https://finn.koetting.tk/coding/higherlower/${game.items.current.id}.png`,
+      ]);
+
+      const gameEmbed = new EmbedBuilder()
+        .setTitle("> Higher or Lower")
+        .setDescription(
+          `Do you think that **${
+            game.items.current.keyword
+          }** has higher or lower searches than **${
+            game.items.history[game.items.history.length - 1].keyword
+          }**?`
+        )
+        .setColor("White")
+        .setImage("attachment://game.png")
+        .setFooter({
+          iconURL: interaction.user.avatarURL({ dynamic: true }),
+          text: `${interaction.user.tag} | Game ID: ${game.id}`,
+        })
+        .setTimestamp();
+
+      gameImage.build(game.score).then(async (image) => {
+        const guessRow = new ActionRowBuilder().addComponents(
+          new ButtonBuilder()
+            .setCustomId(`higher_${game.id}`)
+            .setLabel("Higher")
+            .setStyle(ButtonStyle.Success),
+          new ButtonBuilder()
+            .setCustomId(`lower_${game.id}`)
+            .setLabel("Lower")
+            .setStyle(ButtonStyle.Danger)
+        );
+
+        interaction.editReply({
+          embeds: [gameEmbed],
+          files: [
+            new AttachmentBuilder()
+              .setFile(image)
+              .setName("game.png")
+              .setSpoiler(false),
+          ],
+          components: [guessRow],
+        });
+      });
     });
   },
 };
