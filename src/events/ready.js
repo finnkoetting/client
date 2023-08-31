@@ -13,7 +13,7 @@ module.exports = async (client) => {
 
   if (client.cluster.id === 0) {
     const commandFiles = readdirSync("./src/commands/").filter((file) =>
-      file.endsWith(".js"),
+      file.endsWith(".js")
     );
 
     const commands = [];
@@ -40,33 +40,33 @@ module.exports = async (client) => {
           });
           console.log(
             `${ChalkAdvanced.white("Would You?")} ${ChalkAdvanced.gray(
-              ">",
+              ">"
             )} ${ChalkAdvanced.green(
-              "Successfully registered commands globally",
-            )}`,
+              "Successfully registered commands globally"
+            )}`
           );
         } else {
           if (!process.env.GUILD_ID)
             return console.log(
               ChalkAdvanced.red(
-                "Looks like your bot is not in production mode and you don't have a guild id set in .env",
-              ),
+                "Looks like your bot is not in production mode and you don't have a guild id set in .env"
+              )
             );
           await rest.put(
             Routes.applicationGuildCommands(
               client.user.id,
-              process.env.GUILD_ID,
+              process.env.GUILD_ID
             ),
             {
               body: commands,
-            },
+            }
           );
           console.log(
             `${ChalkAdvanced.white("Would You?")} ${ChalkAdvanced.gray(
-              ">",
+              ">"
             )} ${ChalkAdvanced.green(
-              "Successfully registered commands locally",
-            )}`,
+              "Successfully registered commands locally"
+            )}`
           );
         }
       } catch (err) {
@@ -81,6 +81,8 @@ module.exports = async (client) => {
       status: "dnd",
     });
   };
+
+  require("../util/guildSweeper")();
 
   setTimeout(() => setStatus(), 35 * 1000);
   setInterval(() => setStatus(), 60 * 60 * 1000); // Do this not so often because everytime you set the presence the bot won't receive any events for some seconds

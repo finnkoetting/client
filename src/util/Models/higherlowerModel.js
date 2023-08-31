@@ -12,7 +12,7 @@ const higherlowerModel = new Schema(
     },
     score: { type: Number, required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = model("higherlowerModel", higherlowerModel);

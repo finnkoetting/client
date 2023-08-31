@@ -1,4 +1,11 @@
-const { EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder } = require("discord.js");
+const {
+  EmbedBuilder,
+  SlashCommandBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  AttachmentBuilder,
+} = require("discord.js");
 const fs = require("fs");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
@@ -36,7 +43,7 @@ module.exports = {
 
     interaction.reply({ embeds: [initembed] }).then((async) => {
       const gameDataRaw = fs.readFileSync(
-        path.join(__dirname, "..", "data", "hl-en_EN.json")
+        path.join(__dirname, "..", "data", "hl-en_EN.json"),
       );
       const gameData = JSON.parse(gameDataRaw).data;
 
@@ -79,7 +86,7 @@ module.exports = {
             game.items.current.keyword
           }** has higher or lower searches than **${
             game.items.history[game.items.history.length - 1].keyword
-          }**?`
+          }**?`,
         )
         .setColor("White")
         .setImage("attachment://game.png")
@@ -98,7 +105,7 @@ module.exports = {
           new ButtonBuilder()
             .setCustomId(`lower_${game.id}`)
             .setLabel("Lower")
-            .setStyle(ButtonStyle.Danger)
+            .setStyle(ButtonStyle.Danger),
         );
 
         interaction.editReply({

@@ -9,6 +9,7 @@ module.exports = class DatabaseHandler {
   constructor(connectionString) {
     this.cache = new Map();
     this.guildModel = require("./Models/guildModel");
+    this.webhookCache = require("./Models/webhookCache");
     this.connectionString = connectionString;
   }
 
@@ -106,6 +107,15 @@ module.exports = class DatabaseHandler {
     if (this.cache.has(guildId)) this.cache.delete(guildId);
 
     return !onlyCache ? this.guildModel.deleteMany({ guildID: guildId }) : true;
+  }
+
+  /**
+   * Delete a webhook from the db
+   * @param {number|string} channelId the channel id
+   * @returns {Promise<deleteMany|boolean>}
+   */
+  async deleteWebhook(channelId, onlyCache = false) {
+    return this.webhookCache.deleteMany({ channelId: channelId });
   }
 
   /**

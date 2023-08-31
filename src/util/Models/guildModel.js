@@ -73,6 +73,9 @@ const guildProfile = new Schema(
     botJoined: {
       type: Number,
     },
+    botLeft: {
+      type: Number,
+    },
     customMessages: [
       {
         type: Object,

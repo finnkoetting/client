@@ -1,11 +1,22 @@
 const { WebhookClient, EmbedBuilder } = require("discord.js");
 require("dotenv").config();
+const CronJob = require("cron").CronJob;
+const guildModel = require("../util/Models/guildModel");
 
-module.exports = async (client, guild) => {
+module.exports = async (client, guild, guildDb) => {
   if (!guild?.name) return;
+
+  const guildData = await guildModel.findOne({ guildID: guild?.id });
+
+  await client.database.deleteWebhook(guildData?.dailyChannel, false);
 
   // Only delete the guild settings from the cache we don't want a data lose but also don't need not used data in the cache :)
   await client.database.deleteGuild(guild?.id, true);
+
+  // sweep the guild from the db after 30 days
+
+  guildData.botLeft = Date.now() / 1000;
+  guildData.save();
 
   const webhookPrivate = new WebhookClient({ url: process.env.WEBHOOKPRIVATE });
 
@@ -20,7 +31,8 @@ module.exports = async (client, guild) => {
   }
 
   await webhookPrivate.send({
-    avatarURL: "https://wouldyoubot.gg/static/img/round.webp", // Make sure to update this if you ever change the link thx <3
+    avatarURL:
+      "https://cdn.discordapp.com/avatars/981649513427111957/23da96bbf1eef64855a352e0e29cdc10.webp?size=96", // Make sure to update this if you ever change the link thx <3
     username: global?.devBot ? "Dev Bot" : "Main Bot",
     embeds: [
       new EmbedBuilder()
@@ -30,14 +42,14 @@ module.exports = async (client, guild) => {
           guild.iconURL({
             format: "png",
             dynamic: true,
-          }),
+          })
         )
         .setDescription(
           `**Name**: ${
             guild.name
           }\n**Users**: ${guild.memberCount.toLocaleString()}${
             features ? `\n**Features**: ${features}` : ``
-          }`,
+          }`
         )
         .setFooter({
           text: global?.devBot ? "Dev Bot" : "Main Bot",

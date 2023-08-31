@@ -5,7 +5,13 @@ module.exports = async (client, guild) => {
   if (!guild?.name) return;
 
   // Create and save the settings in the cache so that we don't need to do that at a command run
-  await client.database.getGuild(guild?.id, true);
+  const guildData = await client.database.getGuild(guild?.id, true);
+
+  if (guildData) {
+    guildData.updateOne({
+      botLeft: null,
+  });
+  }
 
   const webhookPrivate = new WebhookClient({ url: process.env.WEBHOOKPRIVATE });
 
@@ -20,7 +26,8 @@ module.exports = async (client, guild) => {
   }
 
   await webhookPrivate.send({
-    avatarURL: "https://wouldyoubot.gg/static/img/round.webp", // Make sure to update this if you ever change the link thx <3
+    avatarURL:
+      "https://cdn.discordapp.com/avatars/981649513427111957/23da96bbf1eef64855a352e0e29cdc10.webp?size=96", // Make sure to update this if you ever change the link thx <3
     username: global?.devBot ? "Dev Bot" : "Main Bot",
     embeds: [
       new EmbedBuilder()

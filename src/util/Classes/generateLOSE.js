@@ -4,22 +4,22 @@ const path = require("path");
 // Import font
 Canvas.GlobalFonts.registerFromPath(
   path.join(__dirname, "..", "..", "data", "fonts", "Poppins-Black.ttf"),
-  "Poppins-Black"
+  "Poppins-Black",
 );
 
 Canvas.GlobalFonts.registerFromPath(
   path.join(__dirname, "..", "..", "data", "fonts", "Poppins-Bold.ttf"),
-  "Poppins-Bold"
+  "Poppins-Bold",
 );
 
 Canvas.GlobalFonts.registerFromPath(
   path.join(__dirname, "..", "..", "data", "fonts", "Poppins-SemiBold.ttf"),
-  "Poppins-SemiBold"
+  "Poppins-SemiBold",
 );
 
 Canvas.GlobalFonts.registerFromPath(
   path.join(__dirname, "..", "..", "data", "fonts", "Poppins-Medium.ttf"),
-  "Poppins-Medium"
+  "Poppins-Medium",
 );
 
 class LOSE {

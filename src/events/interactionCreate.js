@@ -21,7 +21,7 @@ module.exports = async (client, interaction) => {
     "dailyTimezone",
     "dailyMsg",
     "dailyThread",
-    "votemodal"
+    "votemodal",
   ];
   if (!interaction.guild) {
     if (interaction.isChatInputCommand()) {
@@ -94,7 +94,7 @@ module.exports = async (client, interaction) => {
           .reply({
             ephemeral: true,
             content: `You can use this button again <t:${Math.floor(
-              client.used.get(interaction.user.id) / 1000
+              client.used.get(interaction.user.id) / 1000,
             )}:R>!`,
           })
           .catch(() => {});
@@ -108,10 +108,10 @@ module.exports = async (client, interaction) => {
             ephemeral: true,
             content: `<t:${Math.floor(
               guildDb.replayChannels.find(
-                (x) => x.id === interaction.channel.id
+                (x) => x.id === interaction.channel.id,
               ).cooldown /
                 1000 +
-                Date.now() / 1000
+                Date.now() / 1000,
             )}:R> you can use buttons again!`,
           })
           .catch(() => {});
@@ -130,26 +130,26 @@ module.exports = async (client, interaction) => {
               `${interaction.user.id}-${interaction.channel.id}`,
               Date.now() +
                 guildDb.replayChannels.find(
-                  (x) => x.id === interaction.channel.id
-                ).cooldown
+                  (x) => x.id === interaction.channel.id,
+                ).cooldown,
             );
             setTimeout(
               () =>
                 client.used.delete(
-                  `${interaction.user.id}-${interaction.channel.id}`
+                  `${interaction.user.id}-${interaction.channel.id}`,
                 ),
               guildDb.replayChannels.find(
-                (x) => x.id === interaction.channel.id
-              ).cooldown
+                (x) => x.id === interaction.channel.id,
+              ).cooldown,
             );
           } else {
             client.used.set(
               interaction.user.id,
-              Date.now() + guildDb.replayCooldown
+              Date.now() + guildDb.replayCooldown,
             );
             setTimeout(
               () => client.used.delete(interaction.user.id),
-              guildDb.replayCooldown
+              guildDb.replayCooldown,
             );
           }
         }

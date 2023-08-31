@@ -30,7 +30,7 @@ module.exports = {
       game.items.history.push(game.items.current);
 
       const gameDataRaw = fs.readFileSync(
-        path.join(__dirname, "..", "data", "hl-en_EN.json")
+        path.join(__dirname, "..", "data", "hl-en_EN.json"),
       );
       const gameData = JSON.parse(gameDataRaw).data;
 
@@ -79,7 +79,7 @@ module.exports = {
             game.items.current.keyword
           }** has higher or lower searches than **${
             game.items.history[game.items.history.length - 1].keyword
-          }**?`
+          }**?`,
         )
         .setColor("Green")
         .setImage("attachment://game.png")
@@ -98,7 +98,7 @@ module.exports = {
           new ButtonBuilder()
             .setCustomId(`lower_${game.id}`)
             .setLabel("Lower")
-            .setStyle(ButtonStyle.Danger)
+            .setStyle(ButtonStyle.Danger),
         );
 
         interaction.message.edit({

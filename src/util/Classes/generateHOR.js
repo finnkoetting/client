@@ -5,22 +5,22 @@ const { formatNumber } = require("../Functions/number");
 // Import font
 Canvas.GlobalFonts.registerFromPath(
   path.join(__dirname, "..", "..", "data", "Fonts", "Poppins-Black.ttf"),
-  "Poppins-Black"
+  "Poppins-Black",
 );
 
 Canvas.GlobalFonts.registerFromPath(
   path.join(__dirname, "..", "..", "data", "Fonts", "Poppins-Bold.ttf"),
-  "Poppins-Bold"
+  "Poppins-Bold",
 );
 
 Canvas.GlobalFonts.registerFromPath(
   path.join(__dirname, "..", "..", "data", "Fonts", "Poppins-SemiBold.ttf"),
-  "Poppins-SemiBold"
+  "Poppins-SemiBold",
 );
 
 Canvas.GlobalFonts.registerFromPath(
   path.join(__dirname, "..", "..", "data", "Fonts", "Poppins-Medium.ttf"),
-  "Poppins-Medium"
+  "Poppins-Medium",
 );
 
 class HOR {
@@ -69,10 +69,14 @@ class HOR {
     // Background
     const [image1, image2] = await Promise.all([
       Canvas.loadImage(images[0]).catch((e) =>
-        Canvas.loadImage("https://finn.koetting.tk/coding/higherlower/error.png")
+        Canvas.loadImage(
+          "https://finn.koetting.tk/coding/higherlower/error.png",
+        ),
       ),
       Canvas.loadImage(images[1]).catch((e) =>
-        Canvas.loadImage("https://finn.koetting.tk/coding/higherlower/error.png")
+        Canvas.loadImage(
+          "https://finn.koetting.tk/coding/higherlower/error.png",
+        ),
       ),
     ]);
 
@@ -129,7 +133,7 @@ class HOR {
         this.game.items.history[this.game.items.history.length - 1].keyword
       }"`,
       356,
-      170
+      170,
     );
 
     ctx.beginPath();
@@ -148,10 +152,10 @@ class HOR {
     ctx.textAlign = "center";
     ctx.fillText(
       `${formatNumber(
-        this.game.items.history[this.game.items.history.length - 1].value
+        this.game.items.history[this.game.items.history.length - 1].value,
       )}`,
       356,
-      285
+      285,
     );
 
     ctx.beginPath();
@@ -172,7 +176,7 @@ class HOR {
     ctx.fillText(
       `"${this.game.items.current.keyword}`.slice(0, 17),
       1068,
-      258
+      258,
     ) + '"';
 
     // Stats
